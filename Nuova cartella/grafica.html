@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vota la Mascotte - ITTS Eustachio Divini</title>
+    <style>
+        :root {
+            /* Palette Ispirata all'ITTS Eustachio Divini - San Severino Marche */
+            --divini-blu-scuro: #0b2545;
+            --divini-blu: #134074;
+            --divini-azzurro: #0284c7;
+            --divini-azzurro-chiaro: #e0f2fe;
+            --divini-accento: #f59e0b;       /* Oro/Ambra istituzionale */
+            --divini-accento-scuro: #d97706;
+            --divini-accento-soft: #fffbeb;
+            --sfondo: #f1f5f9;
+            --bianco: #ffffff;
+            --testo-scuro: #0f172a;
+            --testo-grigio: #475569;
+            --bordo: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--sfondo);
+            color: var(--testo-scuro);
+            padding-bottom: 110px;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* --- HEADER ISTITUZIONALE ITTS EUSTACHIO DIVINI --- */
+        header {
+            background: linear-gradient(135deg, var(--divini-blu-scuro) 0%, var(--divini-blu) 65%, #1d4ed8 100%);
+            color: var(--bianco);
+            text-align: center;
+            padding: 28px 16px 34px 16px;
+            margin-bottom: 24px;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(11, 37, 69, 0.22);
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--divini-azzurro) 0%, var(--divini-accento) 50%, var(--divini-azzurro) 100%);
+        }
+
+        .school-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #f8fafc;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 5px 13px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
+        .school-badge span {
+            color: #fcd34d;
+        }
+
+        header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.4px;
+        }
+
+        header h1 .highlight {
+            color: #38bdf8;
+        }
+
+        .school-subtitle {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fde68a;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.45;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 14px;
+        }
+
+        /* --- LAYOUT RESPONSIVO --- */
+        .mascots-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        @media (min-width: 600px) {
+            .mascots-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 22px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            header {
+                padding: 38px 20px 44px 20px;
+                margin-bottom: 34px;
+            }
+            header h1 {
+                font-size: 2.35rem;
+            }
+            .mascots-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* --- SCHEDE DELLE MASCOTTE --- */
+        .mascotte-card {
+            background: var(--bianco);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 6px 16px rgba(11, 37, 69, 0.07);
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .mascotte-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--divini-azzurro);
+            box-shadow: 0 14px 28px rgba(19, 64, 116, 0.14);
+        }
+
+        .mascotte-card.selected {
+            border-color: var(--divini-accento);
+            background: linear-gradient(180deg, var(--divini-accento-soft) 0%, var(--bianco) 48%);
+            box-shadow: 0 10px 24px rgba(245, 158, 11, 0.25);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 22px;
+            left: 22px;
+            background-color: var(--divini-blu-scuro);
+            color: var(--bianco);
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            z-index: 2;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .mascotte-card.selected .card-number {
+            background-color: var(--divini-accento);
+            color: var(--divini-blu-scuro);
+        }
+
+        .mascotte-img {
+            width: 100%;
+            height: 215px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 55%, #fef3c7 100%);
+            border: 1px solid #cbd5e1;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4.5rem;
+            overflow: hidden;
+        }
+
+        .mascotte-img.has-photo {
+            background: #ffffff;
+            padding: 8px;
+        }
+
+        .mascotte-img.has-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .mascotte-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--divini-blu-scuro);
+        }
+
+        .mascotte-desc {
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: var(--testo-grigio);
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .btn-select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--divini-blu);
+            background-color: var(--divini-azzurro-chiaro);
+            color: var(--divini-blu-scuro);
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-select:hover {
+            background-color: var(--divini-blu);
+            color: var(--bianco);
+        }
+
+        .mascotte-card.selected .btn-select {
+            background: linear-gradient(135deg, var(--divini-accento) 0%, var(--divini-accento-scuro) 100%);
+            border-color: var(--divini-accento-scuro);
+            color: var(--bianco);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35);
+        }
+
+        /* --- SEZIONE COMMENTO E INVIO --- */
+        .review-section {
+            background: var(--bianco);
+            border-radius: 18px;
+            padding: 22px;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #e2e8f0;
+            border-top: 5px solid var(--divini-blu);
+            box-shadow: 0 8px 22px rgba(11, 37, 69, 0.08);
+        }
+
+        .review-section h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--divini-blu-scuro);
+            margin-bottom: 10px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 14px 15px;
+            background-color: #f8fafc;
+            border: 2px solid var(--bordo);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--testo-scuro);
+            margin-bottom: 14px;
+            transition: all 0.2s;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            background-color: var(--bianco);
+            border-color: var(--divini-azzurro);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--divini-blu) 0%, var(--divini-blu-scuro) 100%);
+            color: var(--bianco);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(11, 37, 69, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:disabled {
+            background: #cbd5e1;
+            color: #64748b;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* --- BARRA FISSA IN BASSO SU TELEFONO QUANDO SELEZIONI UNA MASCOTTE --- */
+        .mobile-sticky-bar {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            /* Nasconde completamente il link Admin su telefono: pagina solo per spettatori */
+            .admin-link, #admin-panel {
+                display: none !important;
+            }
+
+            .mobile-sticky-bar.active {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: var(--divini-blu-scuro);
+                color: var(--bianco);
+                padding: 12px 16px;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+                z-index: 999;
+                border-top: 3px solid var(--divini-accento);
+            }
+
+            .sticky-info {
+                font-size: 0.85rem;
+                line-height: 1.3;
+            }
+
+            .sticky-info strong {
+                display: block;
+                color: #fcd34d;
+                font-size: 0.95rem;
+            }
+
+            .btn-sticky-go {
+                background: var(--divini-accento);
+                color: var(--divini-blu-scuro);
+                border: none;
+                padding: 11px 16px;
+                border-radius: 10px;
+                font-weight: 800;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+        }
+
+        /* Modalità spettatore forzata tramite link QR (?mode=spettatore) */
+        body.spectator-only .admin-link,
+        body.spectator-only #admin-panel {
+            display: none !important;
+        }
+
+        /* --- SCHERMATA DI RINGRAZIAMENTO --- */
+        #thank-you-screen {
+            display: none;
+            text-align: center;
+            background: var(--bianco);
+            padding: 44px 20px;
+            border-radius: 18px;
+            max-width: 550px;
+            margin: 20px auto;
+            border: 2px solid #e2e8f0;
+            border-top: 5px solid var(--divini-accento);
+            box-shadow: 0 10px 25px rgba(11, 37, 69, 0.1);
+        }
+
+        #thank-you-screen h2 {
+            color: var(--divini-blu-scuro);
+            font-size: 1.75rem;
+            margin-bottom: 10px;
+        }
+
+        .voto-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 22px;
+            background-color: var(--divini-azzurro-chiaro);
+            border: 2px solid var(--divini-azzurro);
+            color: var(--divini-blu-scuro);
+            font-weight: 800;
+            border-radius: 12px;
+            font-size: 1.05rem;
+        }
+
+        /* --- PANNELLO ADMIN & QR CODE (SOLO DESKTOP) --- */
+        .admin-link {
+            display: block;
+            text-align: center;
+            margin-top: 45px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .admin-link:hover {
+            color: var(--divini-blu-scuro);
+        }
+
+        #admin-panel {
+            display: none;
+            background: var(--divini-blu-scuro);
+            color: var(--bianco);
+            padding: 24px;
+            border-radius: 16px;
+            border-left: 5px solid var(--divini-accento);
+            max-width: 650px;
+            margin: 20px auto 0 auto;
+            box-shadow: 0 10px 25px rgba(11, 37, 69, 0.25);
+        }
+
+        .qr-section {
+            background: #ffffff;
+            color: var(--testo-scuro);
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .qr-section h4 {
+            color: var(--divini-blu-scuro);
+            margin-bottom: 6px;
+            font-size: 1.05rem;
+        }
+
+        .qr-url-input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        #qr-image {
+            margin: 10px auto;
+            display: block;
+            border: 6px solid #f8fafc;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .summary-box {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .btn-reset {
+            margin-top: 12px;
+            padding: 9px 14px;
+            background: var(--divini-accento);
+            color: var(--divini-blu-scuro);
+            font-weight: 800;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="school-badge">⚙️ <span>I.T.T.S. "Eustachio Divini"</span> • San Severino Marche</div>
+        <h1>🎓 <span class="highlight">VOTA</span> la Mascotte!</h1>
+        <div class="school-subtitle">Sondaggio Ufficiale degli Studenti</div>
+        <p>Tocca la tua mascotte preferita tra le 8 proposte e conferma il tuo voto.</p>
+    </header>
+
+    <div class="container">
+        <!-- CONTENITORE PRINCIPALE DEL VOTO -->
+        <main id="voting-container">
+            
+            <div class="mascots-grid">
+                <!-- MASCOTTE 1 -->
+                <div class="mascotte-card" id="card-1" onclick="selezionaMascotte(1, 'Leo il Leone Sapiente')">
+                    <span class="card-number">#1</span>
+                    <div class="mascotte-img has-photo">
+                        <img src="primo1voto.png" alt="Mascotte Divini 1">
+                    </div>
+                    <div class="mascotte-title">Leo il Leone Sapiente</div>
+                    <p class="mascotte-desc">Rappresenta il coraggio, la determinazione e la voglia di imparare insieme con la sciarpa dell'istituto.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #1">VOTA #1</button>
+                </div>
+
+                <!-- MASCOTTE 2 -->
+                <div class="mascotte-card" id="card-2" onclick="selezionaMascotte(2, 'Gufo Archimede')">
+                    <span class="card-number">#2</span>
+                    <div class="mascotte-img has-photo">
+                        <img src="secondo votro.png" alt="Mascotte Divini 2">
+                    </div>
+                    <div class="mascotte-title">Gufo Archimede</div>
+                    <p class="mascotte-desc">Simbolo di curiosità, ingegno e spirito di osservazione. Sempre pronto ad aiutare i compagni nei progetti.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #2">VOTA #2</button>
+                </div>
+
+                <!-- MASCOTTE 3 -->
+                <div class="mascotte-card" id="card-3" onclick="selezionaMascotte(3, 'Robo-Spark')">
+                    <span class="card-number">#3</span>
+                    <div class="mascotte-img has-photo">
+                        <img src="terzo voto.png" alt="Mascotte Divini 3">
+                    </div>
+                    <div class="mascotte-title">Robo-Spark</div>
+                    <p class="mascotte-desc">Nato nei laboratori del Divini, rappresenta l'innovazione, il futuro e la creatività tecnologica.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #3">VOTA #3</button>
+                </div>
+
+                <!-- MASCOTTE 4 -->
+                <div class="mascotte-card" id="card-4" onclick="selezionaMascotte(4, 'Volpe Astuta')">
+                    <span class="card-number">#4</span>
+                    <div class="mascotte-img">🦊</div>
+                    <div class="mascotte-title">Volpe Astuta</div>
+                    <p class="mascotte-desc">Intelligenza brillante, spirito di adattamento e grande energia per affrontare ogni nuova sfida scolastica.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #4">VOTA #4</button>
+                </div>
+
+                <!-- MASCOTTE 5 -->
+                <div class="mascotte-card" id="card-5" onclick="selezionaMascotte(5, 'Lupo Branco')">
+                    <span class="card-number">#5</span>
+                    <div class="mascotte-img">🐺</div>
+                    <div class="mascotte-title">Lupo Branco</div>
+                    <p class="mascotte-desc">Simboleggia l'unione, l'amicizia e il lavoro di squadra: nessuno resta indietro quando si cammina insieme.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #5">VOTA #5</button>
+                </div>
+
+                <!-- MASCOTTE 6 -->
+                <div class="mascotte-card" id="card-6" onclick="selezionaMascotte(6, 'Aquila Orizzonte')">
+                    <span class="card-number">#6</span>
+                    <div class="mascotte-img">🦅</div>
+                    <div class="mascotte-title">Aquila Orizzonte</div>
+                    <p class="mascotte-desc">Uno sguardo sempre rivolto verso il futuro, con ambizione, libertà di pensiero e grandi obiettivi.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #6">VOTA #6</button>
+                </div>
+
+                <!-- MASCOTTE 7 -->
+                <div class="mascotte-card" id="card-7" onclick="selezionaMascotte(7, 'Tarta-Smart')">
+                    <span class="card-number">#7</span>
+                    <div class="mascotte-img">🐢</div>
+                    <div class="mascotte-title">Tarta-Smart</div>
+                    <p class="mascotte-desc">Costanza, pazienza e rispetto per l'ambiente: passo dopo passo si raggiungono i traguardi più importanti.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #7">VOTA #7</button>
+                </div>
+
+                <!-- MASCOTTE 8 -->
+                <div class="mascotte-card" id="card-8" onclick="selezionaMascotte(8, 'Drago Scintilla')">
+                    <span class="card-number">#8</span>
+                    <div class="mascotte-img">🐉</div>
+                    <div class="mascotte-title">Drago Scintilla</div>
+                    <p class="mascotte-desc">Entusiasmo, passione creativa e spirito sportivo per accendere l'orgoglio di tutto il Divini.</p>
+                    <button type="button" class="btn-select" data-default="VOTA #8">VOTA #8</button>
+                </div>
+            </div>
+
+            <!-- SEZIONE COMMENTO E INVIO -->
+            <div class="review-section" id="sezione-invio">
+                <h3>💬 Lascia un commento</h3>
+                <input type="text" id="recensione-input" class="comment-input" placeholder="Scrivi un breve commento (opzionale)...">
+                <button class="btn-submit" id="btn-invia" onclick="inviaVoto()" disabled>Seleziona prima una mascotte</button>
+            </div>
+
+        </main>
+
+        <!-- BARRA FISSA IN BASSO SU TELEFONO -->
+        <div class="mobile-sticky-bar" id="mobile-sticky-bar">
+            <div class="sticky-info">
+                Hai scelto:
+                <strong id="sticky-nome-mascotte">-</strong>
+            </div>
+            <button class="btn-sticky-go" onclick="scorriAInvio()">Vai al voto ↓</button>
+        </div>
+
+        <!-- SCHERMATA DI RINGRAZIAMENTO -->
+        <div id="thank-you-screen">
+            <h2>🎉 Grazie per il tuo voto!</h2>
+            <p style="margin-bottom: 15px; color: #475569;">La tua preferenza per l'ITTS "E. Divini" è stata registrata con successo.</p>
+            <div class="voto-badge" id="riepilogo-voto"></div>
+        </div>
+
+        <!-- LINK SEGRETO PER LO STAFF (VISIBILE SOLO SU PC) -->
+        <a href="#" class="admin-link" onclick="mostraRisultati(event)">🔒 Area Riservata Team (QR Code e Voti)</a>
+
+        <div id="admin-panel">
+            <!-- GENERATORE QR CODE PER SPETTATORI -->
+            <div class="qr-section">
+                <h4>📱 QR Code per gli Spettatori</h4>
+                <p style="font-size: 0.82rem; color: #475569;">Inquadrando questo QR Code con il telefono si aprirà direttamente la schermata di votazione.</p>
+                <input type="text" id="qr-url-input" class="qr-url-input" oninput="aggiornaQRCode()" placeholder="Incolla qui il link pubblico del sito...">
+                <img id="qr-image" src="" alt="QR Code Votazione" width="210" height="210">
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 6px;">Fai tasto destro sull'immagine → "Salva immagine con nome" per stamparla o proiettarla.</p>
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: #fcd34d;">📊 Risultati su questo dispositivo</h3>
+            <div id="riepilogo-conteggio" class="summary-box"></div>
+            <div id="lista-risultati" style="font-size: 0.9rem; line-height: 1.6;"></div>
+            <button class="btn-reset" onclick="resetVoto()">Resetta blocco voto (per test)</button>
+        </div>
+    </div>
+
+    <script>
+        const FORMSPREE_URL = "https://formspree.io/f/xkjrgjla";
+
+        let mascotteSceltaId = null;
+        let mascotteSceltaNome = "";
+
+        window.onload = function() {
+            // Se aperto dal QR code (?mode=spettatore), forza la vista solo votazioni
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'spettatore') {
+                document.body.classList.add('spectator-only');
+            }
+
+            if (localStorage.getItem('haVotato') === 'true') {
+                mostraSchermataGrazie(localStorage.getItem('votoEspresso'));
+            }
+
+            // Precompila il link corrente per il QR Code
+            const urlBase = window.location.href.split('?')[0];
+            const linkSpettatore = urlBase + "?mode=spettatore";
+            document.getElementById('qr-url-input').value = linkSpettatore;
+            aggiornaQRCode();
+        };
+
+        function aggiornaQRCode() {
+            const url = document.getElementById('qr-url-input').value.trim();
+            if (!url) return;
+            const qrApi = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(url);
+            document.getElementById('qr-image').src = qrApi;
+        }
+
+        function selezionaMascotte(id, nome) {
+            mascotteSceltaId = id;
+            mascotteSceltaNome = nome;
+
+            document.querySelectorAll('.mascotte-card').forEach(card => {
+                card.classList.remove('selected');
+                const btn = card.querySelector('.btn-select');
+                btn.innerText = btn.getAttribute('data-default');
+            });
+
+            const cardSelezionata = document.getElementById('card-' + id);
+            cardSelezionata.classList.add('selected');
+            cardSelezionata.querySelector('.btn-select').innerText = '✓ Selezionata';
+
+            const btnInvia = document.getElementById('btn-invia');
+            btnInvia.disabled = false;
+            btnInvia.innerText = 'Conferma voto per ' + nome + ' →';
+
+            // Attiva la barra fissa in basso su telefono
+            document.getElementById('sticky-nome-mascotte').innerText = nome;
+            document.getElementById('mobile-sticky-bar').classList.add('active');
+        }
+
+        function scorriAInvio() {
+            document.getElementById('sezione-invio').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function inviaVoto() {
+            if (!mascotteSceltaId) return;
+
+            const btnInvia = document.getElementById('btn-invia');
+            btnInvia.disabled = true;
+            btnInvia.innerText = "Invio in corso...";
+
+            const commento = document.getElementById('recensione-input').value.trim();
+
+            try {
+                const risposta = await fetch(FORMSPREE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Mascotte_Votata: mascotteSceltaNome,
+                        Commento: commento || "Nessun commento",
+                        Orario: new Date().toLocaleString('it-IT')
+                    })
+                });
+
+                if (risposta.ok) {
+                    let archivioVoti = JSON.parse(localStorage.getItem('archivioVoti')) || [];
+                    archivioVoti.push({
+                        mascotte: mascotteSceltaNome,
+                        recensione: commento || "Nessun commento",
+                        data: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    });
+
+                    localStorage.setItem('archivioVoti', JSON.stringify(archivioVoti));
+                    localStorage.setItem('haVotato', 'true');
+                    localStorage.setItem('votoEspresso', mascotteSceltaNome);
+                    
+                    mostraSchermataGrazie(mascotteSceltaNome);
+                } else {
+                    alert("Errore durante l'invio. Riprova tra poco.");
+                    btnInvia.disabled = false;
+                    btnInvia.innerText = 'Conferma voto per ' + mascotteSceltaNome + ' →';
+                }
+            } catch (errore) {
+                alert("Problema di connessione. Controlla la rete e riprova.");
+                btnInvia.disabled = false;
+                btnInvia.innerText = 'Conferma voto per ' + mascotteSceltaNome + ' →';
+            }
+        }
+
+        function mostraSchermataGrazie(nomeMascotte) {
+            document.getElementById('voting-container').style.display = 'none';
+            document.getElementById('mobile-sticky-bar').classList.remove('active');
+            document.getElementById('thank-you-screen').style.display = 'block';
+            document.getElementById('riepilogo-voto').innerText = "Hai votato: " + nomeMascotte;
+        }
+
+        function escapeHTML(str) {
+            const p = document.createElement("p");
+            p.textContent = str;
+            return p.innerHTML;
+        }
+
+        function mostraRisultati(e) {
+            e.preventDefault();
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+
+            let archivioVoti = JSON.parse(localStorage.getItem('archivioVoti')) || [];
+            const lista = document.getElementById('lista-risultati');
+            const riepilogo = document.getElementById('riepilogo-conteggio');
+           
+            if (archivioVoti.length === 0) {
+                riepilogo.style.display = 'none';
+                lista.innerHTML = "<p>Nessun voto registrato ancora su questo dispositivo.</p>";
+                return;
+            }
+
+            const conteggi = {};
+            archivioVoti.forEach(v => {
+                conteggi[v.mascotte] = (conteggi[v.mascotte] || 0) + 1;
+            });
+
+            riepilogo.style.display = 'block';
+            riepilogo.innerHTML = "<strong>Totale Voti:</strong><br>" + 
+                Object.entries(conteggi).map(([nome, num]) => `• ${escapeHTML(nome)}: <strong style="color:#fcd34d;">${num}</strong>`).join("<br>");
+
+            let html = "<ul style='list-style:none;'>";
+            archivioVoti.forEach(v => {
+                html += `<li><strong style="color:#7dd3fc;">${escapeHTML(v.mascotte)}</strong> (${escapeHTML(v.data)})<br><em>"${escapeHTML(v.recensione)}"</em></li><hr style="border-color:rgba(255,255,255,0.15); margin:8px 0;">`;
+            });
+            html += "</ul>";
+            lista.innerHTML = html;
+        }
+
+        function resetVoto() {
+            localStorage.removeItem('haVotato');
+            localStorage.removeItem('votoEspresso');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
